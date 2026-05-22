@@ -163,14 +163,13 @@ const DashboardAnalysisHeader: React.FC<{ data: DashboardAnalysis }> = ({ data }
           </div>
           <div className="mt-4">
             <div className="h-2 bg-indigo-200 rounded-full">
-              <div
-                className="h-2 bg-yellow-500 rounded-full"
+              <div className="h-2 bg-yellow-500 rounded-full"
                 style={{
                   width: `${
                     (data.users.applyForWriter / data.users.total) * 100
                   }%`,
-                }}
-              ></div>
+                }}>
+              </div>
             </div>
             <p className="text-indigo-500 text-xs mt-2">
               {((data.users.applyForWriter / data.users.total) * 100).toFixed(
