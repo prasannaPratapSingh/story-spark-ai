@@ -43,6 +43,8 @@ import BlogComponent from "./components/footer/blog.tsx";
 import GuidelinesComponent from "./components/footer/guidelines.tsx";
 import TemplatesComponent from "./components/templates/templates.component";
 import CommunityComponent from "./components/community/community.component";
+import ResourcesListComponent from "./components/community/resources_list.component";
+import ResourceDetailComponent from "./components/community/resource_detail.component";
 import MagicCursorComponent from "./components/magic-cursor/magic_cursor.component";
 const ProtectedRoute = ({
   element,
@@ -387,6 +389,42 @@ function App() {
               element={
                 <RootLayout>
                   <CommunityComponent />
+                </RootLayout>
+              }
+              allowedRoles={[
+                USER_ROLE.USER,
+                USER_ROLE.WRITER,
+                USER_ROLE.ADMIN,
+                USER_ROLE.SUPER_ADMIN,
+              ]}
+            />
+          }
+        />
+        <Route
+          path="/resources"
+          element={
+            <ProtectedRoute
+              element={
+                <RootLayout>
+                  <ResourcesListComponent />
+                </RootLayout>
+              }
+              allowedRoles={[
+                USER_ROLE.USER,
+                USER_ROLE.WRITER,
+                USER_ROLE.ADMIN,
+                USER_ROLE.SUPER_ADMIN,
+              ]}
+            />
+          }
+        />
+        <Route
+          path="/resources/:resourceName"
+          element={
+            <ProtectedRoute
+              element={
+                <RootLayout>
+                  <ResourceDetailComponent />
                 </RootLayout>
               }
               allowedRoles={[
