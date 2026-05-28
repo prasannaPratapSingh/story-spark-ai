@@ -1,5 +1,8 @@
 import { useState, useRef } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+
+import axios from "axios";
+
 import {
   Mail,
   User,
@@ -12,10 +15,6 @@ import {
 } from "lucide-react";
 
 import { motion } from "framer-motion";
-
-import { instance as axios } from "../../helpers/axios/axionInstance";
-import { getBaseUrl } from "../../helpers/config";
-import storybook from "../../assets/storybook.png";
 
 type FormData = {
   fullname: string;
@@ -35,8 +34,11 @@ const INITIAL_FORM_DATA: FormData = {
 
 export default function Contact() {
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
+
   const [error, setError] = useState<string>("");
+
   const [success, setSuccess] = useState<boolean>(false);
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const isSubmittingRef = useRef(false);
@@ -45,6 +47,7 @@ export default function Contact() {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ): void => {
     const fieldName = e.target.name as FormField;
+
     const value = e.target.value;
 
     setFormData((prev) => ({
@@ -87,6 +90,7 @@ export default function Contact() {
     e.preventDefault();
 
     if (isSubmittingRef.current) return;
+
     isSubmittingRef.current = true;
 
     try {
@@ -97,30 +101,33 @@ export default function Contact() {
 
       setLoading(true);
 
-      const response = await axios.post(`${getBaseUrl()}/contact`, {
+      // Replace this with your backend endpoint
+      const response = await axios.post("/contact", {
         fullname: formData.fullname.trim(),
         email: formData.email.trim(),
         subject: formData.subject.trim(),
         message: formData.message.trim(),
       });
 
-      if (response && response.data?.success) {
+      if (response?.data?.success || response.status === 200) {
         setSuccess(true);
+
         setFormData(INITIAL_FORM_DATA);
       } else {
-        setError("Failed to send message. Please try again.");
+        setError("Failed to send message.");
       }
     } catch (err: unknown) {
-      console.error("Contact Form Error:", err);
+      console.error(err);
 
       const message =
         err instanceof Error
           ? err.message
-          : "Failed to send message. Please check your connection.";
+          : "Something went wrong.";
 
       setError(message);
     } finally {
       setLoading(false);
+
       isSubmittingRef.current = false;
     }
   };
@@ -130,14 +137,15 @@ export default function Contact() {
       id="contact"
       className="relative overflow-hidden bg-[#020617] px-5 py-24 text-white sm:px-8 lg:px-16"
     >
-      {/* Background Effects */}
+      {/* BACKGROUND */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.18),transparent_30%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.22),transparent_30%)]" />
 
       <div className="absolute left-0 top-20 h-72 w-72 rounded-full bg-blue-500/20 blur-[120px]" />
+
       <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-purple-500/20 blur-[140px]" />
 
       <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-20 lg:grid-cols-2">
-        {/* LEFT SIDE */}
+        {/* LEFT */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -151,9 +159,9 @@ export default function Contact() {
           <h2 className="text-5xl font-black leading-[0.95] sm:text-6xl lg:text-7xl">
             Let's Build
             <br />
-            Something{" "}
+
             <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-500 bg-clip-text text-transparent">
-              Amazing
+              Something Amazing
             </span>
           </h2>
 
@@ -161,15 +169,17 @@ export default function Contact() {
 
           <p className="mt-8 max-w-xl text-lg leading-9 text-slate-300">
             Have an idea, collaboration, feedback, or just want to say hello?
-            We'd love to hear from you. Let’s create something impactful together.
+            We would love to hear from you.
           </p>
 
-          {/* CARDS */}
+          {/* INFO CARDS */}
           <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/40 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)]">
               <Clock3 className="mb-4 h-8 w-8 text-purple-400" />
 
-              <p className="text-sm text-slate-400">Response Time</p>
+              <p className="text-sm text-slate-400">
+                Response Time
+              </p>
 
               <h3 className="mt-2 text-xl font-bold">
                 Within 24 Hours
@@ -179,7 +189,9 @@ export default function Contact() {
             <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_0_40px_rgba(59,130,246,0.15)]">
               <Globe className="mb-4 h-8 w-8 text-blue-400" />
 
-              <p className="text-sm text-slate-400">Community</p>
+              <p className="text-sm text-slate-400">
+                Community
+              </p>
 
               <h3 className="mt-2 text-xl font-bold">
                 Worldwide Creators
@@ -187,25 +199,17 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* IMAGE */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            viewport={{ once: true }}
-            className="relative mt-14 hidden lg:flex"
-          >
-            <img
-              src={storybook}
-              alt="storybook"
-              className="w-full max-w-[430px] object-contain drop-shadow-[0_0_80px_rgba(139,92,246,0.5)]"
-            />
+          {/* GLOW ELEMENT */}
+          <div className="relative mt-16 hidden items-center justify-center lg:flex">
+            <div className="h-[320px] w-[320px] animate-pulse rounded-full bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-3xl" />
 
-            <div className="absolute -bottom-10 -left-10 h-52 w-52 rounded-full bg-purple-500/20 blur-[120px]" />
-          </motion.div>
+            <div className="absolute flex h-44 w-44 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-xl">
+              <Sparkles className="h-20 w-20 text-purple-400" />
+            </div>
+          </div>
         </motion.div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -213,10 +217,8 @@ export default function Contact() {
           viewport={{ once: true }}
           className="relative"
         >
-          {/* Glow */}
           <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-20 blur-2xl" />
 
-          {/* FORM */}
           <form
             onSubmit={submitHandler}
             className="relative space-y-7 rounded-[2rem] border border-white/10 bg-white/[0.05] p-7 backdrop-blur-2xl sm:p-10"
@@ -235,8 +237,7 @@ export default function Contact() {
                 value={formData.fullname}
                 onChange={changeHandler}
                 required
-                aria-label="Full Name"
-                className="h-16 w-full rounded-2xl border border-white/10 bg-[#0b1120]/80 pl-14 pr-5 pt-5 text-base text-white outline-none transition-all duration-300 placeholder:text-slate-500 hover:border-purple-400/40 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                className="h-16 w-full rounded-2xl border border-white/10 bg-[#0b1120]/80 pl-14 pr-5 pt-5 text-base text-white outline-none transition-all duration-300 hover:border-purple-400/40 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
               />
             </div>
 
@@ -254,7 +255,6 @@ export default function Contact() {
                 value={formData.email}
                 onChange={changeHandler}
                 required
-                aria-label="Email"
                 className="h-16 w-full rounded-2xl border border-white/10 bg-[#0b1120]/80 pl-14 pr-5 pt-5 text-base text-white outline-none transition-all duration-300 hover:border-blue-400/40 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
@@ -273,7 +273,6 @@ export default function Contact() {
                 value={formData.subject}
                 onChange={changeHandler}
                 required
-                aria-label="Subject"
                 className="h-16 w-full rounded-2xl border border-white/10 bg-[#0b1120]/80 pl-14 pr-5 pt-5 text-base text-white outline-none transition-all duration-300 hover:border-pink-400/40 focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20"
               />
             </div>
@@ -292,7 +291,6 @@ export default function Contact() {
                 value={formData.message}
                 onChange={changeHandler}
                 required
-                aria-label="Message"
                 className="w-full resize-none rounded-2xl border border-white/10 bg-[#0b1120]/80 pl-14 pr-5 pt-9 text-base text-white outline-none transition-all duration-300 hover:border-purple-400/40 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
               />
             </div>
@@ -326,7 +324,7 @@ export default function Contact() {
                 className="rounded-2xl border border-green-500/30 bg-green-500/10 px-4 py-4"
               >
                 <p className="text-center text-sm font-medium text-green-400 sm:text-base">
-                  ✓ Message sent successfully. We'll get back to you soon.
+                  ✓ Message sent successfully.
                 </p>
               </motion.div>
             )}
