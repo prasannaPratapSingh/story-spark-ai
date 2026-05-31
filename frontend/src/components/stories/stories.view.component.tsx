@@ -52,6 +52,7 @@ function getInitials(title?: string): string {
 interface StoryCoverImageProps {
   title?: string;
   tag?: string;
+  imageURL?: string;
   size?: "full" | "thumb";
   className?: string;
   style?: React.CSSProperties;
@@ -60,13 +61,33 @@ interface StoryCoverImageProps {
 const StoryCoverImage: React.FC<StoryCoverImageProps> = ({
   title = "",
   tag = "default",
+  imageURL = "",
   size = "full",
   className = "",
   style = {},
 }) => {
   const theme = getGenreTheme(tag);
   const initials = getInitials(title);
+  const [imgError, setImgError] = useState(false);
 
+    if (imageURL && size !== "thumb" && !imgError) {
+  return (
+    <img
+      src={imageURL}
+      alt={title || "Story cover"}
+      onError={() => setImgError(true)}
+      className={className}
+      style={{
+        width: "100%",
+        height: "100%",
+        minHeight: "192px",
+        objectFit: "cover",
+        borderRadius: "inherit",
+        ...style,
+      }}
+    />
+  );
+}
   if (size === "thumb") {
     return (
       <div
@@ -850,6 +871,7 @@ const StoriesViewComponent: React.FC<StoriesComponentProps> = ({
                 <StoryCoverImage
                   title={selectedStory.title}
                   tag={selectedStory.tag}
+                  imageURL={selectedStory.imageURL}
                   className="transition-transform duration-500 group-hover:scale-105"
                   style={{ width: "100%", height: "100%", borderRadius: "0.75rem" }}
                 />
