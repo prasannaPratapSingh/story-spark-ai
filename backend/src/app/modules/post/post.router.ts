@@ -1,10 +1,10 @@
 import express from "express";
 import { PostController } from "./post.controller";
-
 import auth from "../../middleware/auth.middleware";
-import { ENUM_USER_ROLE } from "../../../enums/user";
- 
 import checkRequestLimit from "../../middleware/check.request.limit";
+import validateRequest from "../../middleware/validate.request";
+import { PostValidator } from "./post.validation";
+import { ENUM_USER_ROLE } from "../../../enums/user";
 
 const router = express.Router();
 
@@ -14,12 +14,11 @@ const router = express.Router();
 
 router.post(
   "/create-post",
-  auth(
-  ENUM_USER_ROLE.USER,
+  auth(ENUM_USER_ROLE.USER,
   ENUM_USER_ROLE.WRITER,
   ENUM_USER_ROLE.ADMIN,
-  ENUM_USER_ROLE.SUPER_ADMIN
-),
+  ENUM_USER_ROLE.SUPER_ADMIN),
+  validateRequest(PostValidator.createPost),
   PostController.createPost
 );
 
@@ -78,6 +77,7 @@ router.patch(
     ENUM_USER_ROLE.ADMIN,
     ENUM_USER_ROLE.SUPER_ADMIN
   ),
+  validateRequest(PostValidator.updatePost),
   PostController.updatePost
 );
 

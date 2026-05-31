@@ -29,7 +29,7 @@ app.use(limiter);
 const defaultCorsOrigins = [
   "http://localhost:4001",
   "http://localhost:4002",
-  "https://storysparkai.vercel.app",
+  "https://storysparkai-five.vercel.app",
 ];
 
 const corsOrigins =
@@ -56,7 +56,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Keeps your extended payload parsing enabled
 app.use(cookieParser() as any);
-app.use("/review", storyRoutes);
+
 
 // Routes
 app.use("/api/v1", Routers);
