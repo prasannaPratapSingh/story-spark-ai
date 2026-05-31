@@ -1,4 +1,3 @@
-// THE CORRECTED CODE SNIPPET FOR REACTION SERVICE
 import ApiError from "../../../errors/api_error";
 import { ITokenPayload } from "../../../interfaces/token";
 import { User } from "../user/user.model";
@@ -17,54 +16,40 @@ const toggleReaction = async (
   if (!user) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User not found!");
   }
-  const post = await Post.findOne({
-    _id: postId,
-    isDeleted: { $ne: true },
-  });
+  const post = await Post.findOne({ _id: postId, isDeleted: { $ne: true } });
   if (!post) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Post not found!");
   }
 
+  // Check if reaction already exists
   const existingReaction = await Reaction.findOne({
+    postId: postId,
     userId: user._id,
-    postId: post._id,
+    type: type,
   });
 
   if (existingReaction) {
+    // Remove reaction
     await Reaction.findByIdAndDelete(existingReaction._id);
-    const updatedPost = await Post.findOneAndUpdate(
-      { _id: postId },
-      {
-        $pull: { reactions: existingReaction._id },
-        $inc: { likesCount: -1 },
-      },
-      { new: true }
+    post.likesCount = Math.max(0, post.likesCount - 1);
+    post.reactions = post.reactions || [];
+    post.reactions = post.reactions.filter(
+      (rId) => rId.toString() !== existingReaction._id.toString()
     );
-    if (updatedPost && updatedPost.likesCount < 0) {
-      await Post.updateOne({ _id: postId }, { $set: { likesCount: 0 } });
-    }
-    return {
-      message: "Reaction removed",
-      likesCount: Math.max(0, updatedPost?.likesCount ?? 0),
-    };
+    await post.save();
+    return { message: "Reaction removed", likesCount: post.likesCount };
   } else {
+    // Add reaction
     const newReaction = await Reaction.create({
       postId: new Types.ObjectId(postId),
       userId: user._id,
       type: type,
     });
-    const updatedPost = await Post.findOneAndUpdate(
-      { _id: postId },
-      {
-        $addToSet: { reactions: newReaction._id },
-        $inc: { likesCount: 1 },
-      },
-      { new: true }
-    );
-    return {
-      message: "Reaction added",
-      likesCount: updatedPost?.likesCount ?? 0,
-    };
+    post.likesCount = post.likesCount + 1;
+    post.reactions = post.reactions || [];
+    post.reactions.push(newReaction._id);
+    await post.save();
+    return { message: "Reaction added", likesCount: post.likesCount };
   }
 };
 
