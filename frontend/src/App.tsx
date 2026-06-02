@@ -1,5 +1,4 @@
 import React from "react";
-
 import { createBrowserRouter, Navigate, Outlet, RouterProvider } from "react-router-dom";
 
 import { USER_ROLE } from "./constants/role";
@@ -153,18 +152,18 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Isolated layout branches
-  { path: "/auth/email-validation", element: <EmailValidationComponent /> },
+  // Isolated layout branches (Fixed relative context matching)
+  { path: "auth/email-validation", element: <EmailValidationComponent /> },
   {
     element: <ProtectedRoute allowedRoles={ALL_ROLES} />,
     children: [
-      { path: "/payment", element: <PaymentComponent /> },
-      { path: "/collab", element: <CollabHome /> },
-      { path: "/collab/:roomId", element: <CollabRoom /> },
+      { path: "payment", element: <PaymentComponent /> },
+      { path: "collab", element: <CollabHome /> },
+      { path: "collab/:roomId", element: <CollabRoom /> },
     ],
   },
 
-  // Dashboard
+  // Dashboard Structure (Cleaned redundant routing conditions)
   {
     path: "/dashboard",
     element: <ProtectedRoute allowedRoles={ALL_ROLES} />,
@@ -174,6 +173,10 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <DashboardComponent /> },
           { path: "profile", element: <ProfileComponent /> },
+          { path: "settings", element: <SettingComponent /> },
+          { path: "published-stories", element: <PublishedStoriesComponent /> },
+          
+          // Elevated Admin Guard
           {
             element: <ProtectedRoute allowedRoles={ELEVATED_ADMIN_ROLES} />,
             children: [
@@ -181,17 +184,14 @@ const router = createBrowserRouter([
               { path: "users", element: <UserComponent /> },
             ],
           },
-          {
-            element: <ProtectedRoute allowedRoles={ALL_ROLES} />,
-            children: [
-              { path: "settings", element: <SettingComponent /> },
-              { path: "published-stories", element: <PublishedStoriesComponent /> },
-            ],
-          },
+          
+          // Writer Only Guard
           {
             element: <ProtectedRoute allowedRoles={[USER_ROLE.WRITER]} />,
             children: [{ path: "analytics", element: <AnalyticsPage /> }],
           },
+          
+          // Elevated Access Guard for Authorship Management
           {
             element: <ProtectedRoute allowedRoles={[USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.WRITER]} />,
             children: [{ path: "post-lists", element: <PostListsComponent /> }],
