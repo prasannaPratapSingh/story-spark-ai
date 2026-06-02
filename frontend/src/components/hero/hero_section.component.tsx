@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import Typewriter from "./typewriter.component";
 
 // Register the GSAP plugin
 gsap.registerPlugin(useGSAP);
@@ -286,7 +287,13 @@ const HeroSectionComponent = () => {
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
             Ignite Your Imagination With <br className="hidden sm:block" />
             <span className="hero-gradient-text pb-2">
-              AI-Driven Storytelling
+              <Typewriter
+                phrases={[
+                  "AI-Driven Storytelling",
+                  "Creative Story Generation",
+                  "Smart Writing Assistant",
+                ]}
+              />
             </span>
           </h1>
 
