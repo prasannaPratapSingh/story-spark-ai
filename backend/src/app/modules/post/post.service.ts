@@ -312,7 +312,6 @@ const getLatestPosts = async () => {
         path: "reactions",
         populate: { path: "userId", select: "email" },
       })
-      .populate("bookmarks", "email");
     return res;
   } catch (error) {
     throw new ApiError(
@@ -336,7 +335,6 @@ const getFeaturedPosts = async () => {
         path: "reactions",
         populate: { path: "userId", select: "email" },
       })
-      .populate("bookmarks", "email");
     return res;
   } catch (error) {
     throw new ApiError(
@@ -369,7 +367,6 @@ const getSinglePost = async (id: string) => {
       path: "reactions",
       populate: { path: "userId", select: "email" },
     })
-    .populate("bookmarks", "email");
   if (!postById) {
     throw new ApiError(httpStatus.NOT_FOUND, "Post not found!");
   }
@@ -392,7 +389,6 @@ const getPostsByTag = async (tag: string, excludeId?: string) => {
       path: "reactions",
       populate: { path: "userId", select: "email" },
     })
-    .populate("bookmarks", "email");
   return result;
 };
 
