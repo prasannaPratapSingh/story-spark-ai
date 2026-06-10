@@ -6,8 +6,7 @@ import {
   useMarkAllNotificationsReadMutation,
 } from "../redux/apis/notification.api";
 import { connectSocket, disconnectSocket } from "../socket/socket.oi";
-import type { NotificationItem } from "../models/notification";
-import type { INotification } from "../models/notification";
+import type { NotificationItem, INotification } from "../models/notification";
 
 /**
  * Notification bell: REST + Socket.IO real-time updates.
@@ -101,10 +100,10 @@ export const useNotifications = () => {
 
       // Listen for real-time notifications
       const handleNewNotification = (notification: INotification) => {
-        setRealtimeNotifications((prev) => {
-          const next = [notification, ...prev.filter((item) => item._id !== notification._id)];
-          return next;
-        });
+        setRealtimeNotifications((prev) => [
+          notification,
+          ...prev.filter((item) => item._id !== notification._id),
+        ]);
       };
 
       socket.on("connect", handleSocketConnected);
