@@ -559,6 +559,7 @@ const StoriesViewComponent: React.FC<StoriesComponentProps> = ({
   useEffect(() => {
     const autoSaveStory = async () => {
       if (!isLogin || !selectedStory) return;
+      if (selectedStory.uuid === "test-1") return;
       if (selectedStory.content === lastSavedContentRef.current) return;
       if (hasSavedSessionRef.current) return;
       if (isSavingRef.current) return;
@@ -1041,6 +1042,7 @@ ${content}
   useEffect(() => {
     const autoSaveStory = async () => {
       if (!isLogin || !selectedStory) return;
+      if (selectedStory.uuid === "test-1") return;
       if (selectedStory.content === lastSavedContentRef.current) return;
       if (hasSavedSessionRef.current) return;
       if (isSavingRef.current) return;
